@@ -80,7 +80,22 @@
                     <p class="print-meta">Établissement : <span id="print-hotel-name">-</span> | Classification : <span id="print-stars">-</span> | Auditeur : <span id="print-auditor">-</span> | Date : <span id="print-date">-</span></p>
                 </div>
 
-                <div class="summary-wrapper">
+                <!-- SUB-SECTION A: Pre-Reveal Screen (Waiting for Click) -->
+                <div class="pre-reveal-container" id="summary-pre-reveal">
+                    <div class="brand">
+                        <i class="fa-solid fa-clipboard-check brand-icon"></i>
+                        <h2>Votre diagnostic est prêt.</h2>
+                    </div>
+                    <p class="reveal-lead">Nous avons compilé vos réponses et analysé les gisements de rentabilité et d'automatisation de votre établissement.</p>
+                    <div class="action-area">
+                        <button type="button" class="btn-typeform" id="btn-reveal-results">
+                            Révéler mon bilan de diagnostic <span class="btn-kbd">Entrée <i class="fa-solid fa-arrow-turn-down"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SUB-SECTION B: Post-Reveal Screen (Bilan complet et bouton PDF rouge) -->
+                <div class="summary-wrapper post-reveal-hidden" id="summary-post-reveal">
                     <div class="summary-intro">
                         <span class="report-tag">Bilan d'Optimisation</span>
                         <h2 id="summary-hotel-title">Diagnostic personnalisé</h2>
@@ -100,37 +115,11 @@
                         <!-- Injected dynamically by JS -->
                     </div>
 
-                    <!-- Upgrade Business CTA -->
-                    <div class="upgrade-cta-box no-print">
-                        <div class="cta-content">
-                            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Prêt à automatiser vos opérations ?</h3>
-                            <p>Nous concevons et intégrons vos solutions d'automatisation sur-mesure pour un retour sur investissement immédiat.</p>
-                        </div>
-                        <button type="button" class="btn-typeform" id="btn-submit-notion">
-                            Enregistrer dans votre Notion <span class="btn-kbd"><i class="fa-solid fa-paper-plane"></i></span>
-                        </button>
-                    </div>
-
-                    <!-- Actions Panel -->
+                    <!-- Actions Panel (Single Red PDF Button) -->
                     <div class="summary-actions no-print">
-                        <button type="button" class="btn-typeform-secondary" id="btn-print-pdf">
+                        <button type="button" class="btn-pdf-red" id="btn-print-pdf">
                             <i class="fa-solid fa-file-pdf"></i> Télécharger le Rapport PDF
                         </button>
-                        <button type="button" class="btn-typeform-secondary" id="btn-show-json">
-                            <i class="fa-solid fa-code"></i> Afficher le JSON
-                        </button>
-                    </div>
-
-                    <!-- Hidden by default JSON view -->
-                    <div class="json-output-wrapper no-print" id="json-wrapper">
-                        <div class="json-header">
-                            <span>Flux de données JSON de l'audit</span>
-                            <div class="json-actions">
-                                <button type="button" class="btn-icon" id="btn-copy-json"><i class="fa-regular fa-copy"></i> Copier</button>
-                                <button type="button" class="btn-icon" id="btn-download-json"><i class="fa-solid fa-download"></i> Télécharger</button>
-                            </div>
-                        </div>
-                        <pre><code id="json-preview"></code></pre>
                     </div>
                 </div>
 
@@ -147,18 +136,6 @@
         <button type="button" class="control-btn" id="ctrl-next" title="Question suivante">
             <i class="fa-solid fa-chevron-down"></i>
         </button>
-    </div>
-
-    <!-- Success Modal -->
-    <div class="modal-overlay no-print" id="success-modal">
-        <div class="modal-content">
-            <div class="success-icon-animation" id="success-icon-container">
-                <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <h3 id="modal-title">Diagnostic Enregistré !</h3>
-            <p id="modal-text">Les données de l'audit ont été enregistrées avec succès dans votre espace Notion.</p>
-            <button type="button" class="btn-typeform" id="btn-close-modal">Nouveau Diagnostic</button>
-        </div>
     </div>
 
     <!-- Main Logic Script -->

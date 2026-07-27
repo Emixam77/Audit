@@ -19,6 +19,9 @@ html {
     --success: #000000;
     --danger: #000000;
     
+    --accent-red: #e11d48; /* Red Accent for PDF Button */
+    --accent-red-hover: #be123c;
+    
     --transition-slide: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
     --transition-quick: all 0.15s ease-out;
 }
@@ -72,7 +75,7 @@ body {
     color: var(--text-primary);
     border: 1px solid var(--border-color);
     padding: 0.3rem 0.75rem;
-    border-radius: 0px; /* Sharp corners for modern minimal look */
+    border-radius: 0px; /* Sharp corners */
     z-index: 90;
     background: #ffffff;
 }
@@ -172,7 +175,7 @@ body {
     border-bottom-width: 2.5px;
 }
 
-/* --- BUTTONS (MONOCHROME) --- */
+/* --- BUTTONS --- */
 .btn-typeform {
     background-color: var(--accent-black);
     color: #ffffff;
@@ -214,20 +217,27 @@ body {
     color: #000000;
 }
 
-.btn-typeform-secondary {
-    background-color: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    padding: 0.9rem 1.8rem;
-    font-size: 1rem;
+/* --- RED PDF BUTTON --- */
+.btn-pdf-red {
+    background-color: var(--accent-red);
+    color: #ffffff;
+    border: 1px solid var(--accent-red);
+    padding: 1.1rem 2.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
     border-radius: 0px;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
     transition: var(--transition-quick);
+    width: 100%;
+    justify-content: center;
 }
 
-.btn-typeform-secondary:hover {
-    background-color: var(--accent-gray-light);
+.btn-pdf-red:hover {
+    background-color: var(--accent-red-hover);
+    border-color: var(--accent-red-hover);
 }
 
 /* --- QUESTION STYLING --- */
@@ -390,11 +400,43 @@ body {
 }
 
 /* --- DIAGNOSTIC REPORT CARD & GRAPHS --- */
+.pre-reveal-container {
+    background-color: #ffffff;
+    border: 2px solid var(--border-color);
+    padding: 3rem;
+    text-align: center;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.reveal-lead {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post-reveal-hidden {
+    display: none;
+}
+
 .summary-wrapper {
     background-color: #ffffff;
     border-radius: 0px;
     padding: 3rem;
     border: 2px solid var(--border-color);
+    animation: slideUpFade 0.5s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .summary-intro {
@@ -547,191 +589,10 @@ body {
     color: var(--text-primary);
 }
 
-/* Upgrade CTA block */
-.upgrade-cta-box {
-    background-color: var(--accent-gray-light);
-    border: 1px solid var(--border-color);
-    border-radius: 0px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-.cta-content h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.25rem;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.cta-content p {
-    font-size: 0.95rem;
-    color: var(--text-muted);
-}
-
-/* Webhook Configuration Panel */
-.webhook-settings-panel {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    border-radius: 0px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 2.5rem;
-}
-
-.webhook-settings-panel details summary {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    cursor: pointer;
-    outline: none;
-}
-
-.webhook-config-group {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.webhook-config-group label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.webhook-config-group input {
-    border: 1px solid var(--border-color);
-    border-radius: 0px;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.9rem;
-    width: 100%;
-    outline: none;
-}
-
-.field-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
 .summary-actions {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-/* JSON Output container */
-.json-output-wrapper {
-    display: none;
-    border-radius: 0px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    background-color: #ffffff;
-    margin-top: 1.5rem;
-}
-
-.json-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.65rem 1rem;
-    background-color: var(--accent-gray-light);
-    border-bottom: 1px solid var(--border-color);
-    font-size: 0.8rem;
-    color: var(--text-primary);
-    font-weight: 700;
-}
-
-.json-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-icon {
-    background-color: #ffffff;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: var(--transition-quick);
-}
-
-.btn-icon:hover {
-    background-color: var(--accent-black);
-    color: #ffffff;
-}
-
-pre {
-    padding: 1.5rem;
-    max-height: 250px;
-    overflow-y: auto;
-    font-family: monospace;
-    font-size: 0.85rem;
-    color: var(--text-primary);
-    text-align: left;
-}
-
-/* --- MODAL --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(2px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: var(--transition-quick);
-    z-index: 1000;
-}
-
-.modal-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.modal-content {
-    background-color: #ffffff;
-    border: 2px solid var(--border-color);
-    border-radius: 0px;
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 440px;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    transform: scale(0.95);
-    transition: var(--transition-slide);
-}
-
-.modal-overlay.active .modal-content {
-    transform: scale(1);
-}
-
-.success-icon-animation {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--text-primary) !important;
-}
-
-.modal-content h3 {
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.modal-content p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+    margin-top: 1rem;
 }
 
 /* --- MEDIA QUERY PRINT (PDF EXPORT STYLING) --- */
@@ -803,10 +664,5 @@ pre {
     
     .bar-label {
         grid-column: 1 / 3;
-    }
-    
-    .upgrade-cta-box {
-        flex-direction: column;
-        align-items: stretch;
     }
 }

@@ -66,13 +66,13 @@ const AUDIT_DATA = {
         questions: [
             {
                 id: "room_tech",
-                text: "Comment un problème technique (ex: ampoule grillée, climatisation) est-il signalé et résolu ?",
+                text: "Comment un problème technique (ex: ampoule grillée, climatisation) is-il signalé et résolu ?",
                 suggestions: [
                     {
                         text: "Le client appelle la réception, qui cherche ensuite le technicien (appel, SMS ou oralement).",
                         score: 5,
                         maturity: 20,
-                        diagnosis: "La communication verbale des pannes crée des goulets d'étranglement et nuit à la traçabilité.",
+                        diagnosis: "La communication verbale des pannes crée des goulets d'entranglement et nuit à la traçabilité.",
                         upgradeTip: "<strong>Opportunité d'upgrade :</strong> Donnez la possibilité de scanner un QR Code discret sous l'interrupteur pour déclarer un problème technique. <strong>Bénéfice :</strong> Alerte automatique instantanée sur le mobile du technicien. Le client est rassuré en temps réel et la réception ne gère plus l'intermédiaire."
                     },
                     {
@@ -340,28 +340,16 @@ const elements = {
     hotelStars: document.getElementById("hotel-stars"),
     auditorName: document.getElementById("auditor-name"),
     
-    // Submit action Notion API
-    btnSubmitNotion: document.getElementById("btn-submit-notion"),
+    // Reveal and Summary Sub-sections
+    preRevealSec: document.getElementById("summary-pre-reveal"),
+    postRevealSec: document.getElementById("summary-post-reveal"),
+    btnRevealResults: document.getElementById("btn-reveal-results"),
+    btnPrintPdf: document.getElementById("btn-print-pdf"),
     
-    // Summary
+    // Summary Fields
     summaryHotelTitle: document.getElementById("summary-hotel-title"),
     chartContainer: document.getElementById("chart-bars-container"),
     recommendationsContainer: document.getElementById("recommendations-container"),
-    
-    // Actions & JSON
-    btnShowJson: document.getElementById("btn-show-json"),
-    jsonWrapper: document.getElementById("json-wrapper"),
-    jsonPreview: document.getElementById("json-preview"),
-    btnCopyJson: document.getElementById("btn-copy-json"),
-    btnDownloadJson: document.getElementById("btn-download-json"),
-    btnPrintPdf: document.getElementById("btn-print-pdf"),
-    
-    // Modal Success
-    successModal: document.getElementById("success-modal"),
-    successIconContainer: document.getElementById("success-icon-container"),
-    modalTitle: document.getElementById("modal-title"),
-    modalText: document.getElementById("modal-text"),
-    btnCloseModal: document.getElementById("btn-close-modal"),
     
     // Print fields
     printHotelName: document.getElementById("print-hotel-name"),
@@ -400,6 +388,12 @@ function goToSlide(index) {
         if (currentQuestionIndex === -1) {
             elements.secIntro.classList.add("active");
         } else if (currentQuestionIndex === flatQuestions.length) {
+            // Reset state to pre-reveal screen when entering summary slide
+            elements.preRevealSec.style.display = "block";
+            elements.postRevealSec.classList.add("post-reveal-hidden");
+            elements.btnRevealResults.disabled = false;
+            elements.btnRevealResults.innerHTML = `Révéler mon bilan de diagnostic <span class="btn-kbd">Entrée <i class="fa-solid fa-arrow-turn-down"></i></span>`;
+            
             generateSummary();
             elements.secSummary.classList.add("active");
         } else {
@@ -585,23 +579,13 @@ function generateSummary() {
         totalScoreSum += categoryMaturity;
         categoryCount++;
 
-        let colorClass = "danger";
-        let labelMaturity = "Faible";
-        if (categoryMaturity >= 70) {
-            colorClass = "success";
-            labelMaturity = "Excellente";
-        } else if (categoryMaturity >= 40) {
-            colorClass = "warning";
-            labelMaturity = "Moyenne";
-        }
-
         // Render chart bar
         const barRow = document.createElement("div");
         barRow.className = "bar-row";
         barRow.innerHTML = `
             <span class="bar-label">${catData.title}</span>
             <div class="bar-track">
-                <div class="bar-fill ${colorClass}" style="width: ${categoryMaturity}%"></div>
+                <div class="bar-fill" style="width: ${categoryMaturity}%"></div>
             </div>
             <span class="bar-percentage">${categoryMaturity}%</span>
         `;
@@ -614,7 +598,7 @@ function generateSummary() {
         let detailedAdviceHtml = catReports.map(rep => `
             <div style="margin-bottom: 1.25rem;">
                 <p class="rubric-current-situation"><strong>Situation actuelle :</strong> ${rep.currentSituation}</p>
-                <p style="font-size: 0.95rem; color: #ef4444; margin-bottom: 0.25rem;">⚠️ ${rep.diagnosis}</p>
+                <p style="font-size: 0.95rem; color: #666666; margin-bottom: 0.25rem;">⚠️ ${rep.diagnosis}</p>
                 <p class="rubric-upgrade-text">${rep.recommendation}</p>
             </div>
         `).join("");
@@ -623,7 +607,7 @@ function generateSummary() {
             <h4>
                 <span>${catData.title}</span>
                 <span class="rubric-maturity-badge ${categoryMaturity >= 70 ? 'high' : (categoryMaturity >= 40 ? 'medium' : 'low')}">
-                    Maturité ${labelMaturity}
+                    Maturité ${categoryMaturity >= 70 ? 'Excellente' : (categoryMaturity >= 40 ? 'Moyenne' : 'Faible')}
                 </span>
             </h4>
             <div style="margin-top: 1rem;">
@@ -656,16 +640,14 @@ function generateSummary() {
         },
         rubriques: jsonReportDetails
     };
-
-    elements.jsonPreview.textContent = JSON.stringify(latestReportJSON, null, 4);
 }
 
-// --- SUBMIT TO NOTION API (VIA VERCEL SERVERLESS FUNCTION) ---
-elements.btnSubmitNotion.addEventListener("click", () => {
-    elements.btnSubmitNotion.disabled = true;
-    elements.btnSubmitNotion.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Envoi vers Notion...`;
+// --- SUBMIT TO NOTION AND REVEAL RESULTS ---
+elements.btnRevealResults.addEventListener("click", () => {
+    elements.btnRevealResults.disabled = true;
+    elements.btnRevealResults.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Génération du bilan...`;
 
-    // Fetch call directly to the Vercel API endpoint
+    // 1. Silent submit to Notion API in background
     fetch("/api/submit-audit", {
         method: "POST",
         headers: {
@@ -674,32 +656,19 @@ elements.btnSubmitNotion.addEventListener("click", () => {
         body: JSON.stringify(latestReportJSON)
     })
     .then(response => {
-        elements.btnSubmitNotion.disabled = false;
-        elements.btnSubmitNotion.innerHTML = `Enregistrer dans votre Notion <span class="btn-kbd"><i class="fa-solid fa-paper-plane"></i></span>`;
-
-        if (response.ok) {
-            elements.successIconContainer.className = "success-icon-animation success";
-            elements.successIconContainer.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
-            elements.modalTitle.textContent = "Diagnostic Enregistré !";
-            elements.modalText.textContent = "Les données de l'audit ont été enregistrées avec succès dans votre espace Notion.";
-            elements.successModal.classList.add("active");
-        } else {
-            return response.json().then(errData => {
-                throw new Error(errData.error || "Réponse serveur incorrecte.");
-            });
+        if (!response.ok) {
+            console.warn("Échec d'enregistrement silencieux dans Notion, mais affichage des résultats quand même.");
         }
     })
     .catch(err => {
-        elements.btnSubmitNotion.disabled = false;
-        elements.btnSubmitNotion.innerHTML = `Enregistrer dans votre Notion <span class="btn-kbd"><i class="fa-solid fa-paper-plane"></i></span>`;
-
-        // Setup Error Modal
-        elements.successIconContainer.className = "success-icon-animation error";
-        elements.successIconContainer.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i>`;
-        elements.modalTitle.textContent = "Échec de l'enregistrement";
-        elements.modalText.textContent = `Erreur : ${err.message}. Veuillez vérifier que vos variables d'environnement NOTION_TOKEN et NOTION_DATABASE_ID sont correctement définies sur Vercel.`;
-        elements.successModal.classList.add("active");
+        console.error("Notion network transmission error:", err);
     });
+
+    // 2. Animate and Reveal Diagnostic card after a short timeout (simulates computation)
+    setTimeout(() => {
+        elements.preRevealSec.style.display = "none";
+        elements.postRevealSec.classList.remove("post-reveal-hidden");
+    }, 1200);
 });
 
 // --- CONTROLS AND OTHER EVENTS ---
@@ -713,52 +682,9 @@ elements.ctrlNext.addEventListener("click", () => {
     if (currentQuestionIndex < flatQuestions.length) goToSlide(currentQuestionIndex + 1);
 });
 
-// JSON Show panel toggle
-elements.btnShowJson.addEventListener("click", () => {
-    const isVisible = elements.jsonWrapper.style.display === "block";
-    elements.jsonWrapper.style.display = isVisible ? "none" : "block";
-    if (!isVisible) {
-        elements.jsonWrapper.scrollIntoView({ behavior: 'smooth' });
-    }
-});
-
-// Copy JSON
-elements.btnCopyJson.addEventListener("click", () => {
-    navigator.clipboard.writeText(elements.jsonPreview.textContent).then(() => {
-        elements.btnCopyJson.innerHTML = `<i class="fa-solid fa-check" style="color: var(--success)"></i> Copié`;
-        setTimeout(() => {
-            elements.btnCopyJson.innerHTML = `<i class="fa-regular fa-copy"></i> Copier`;
-        }, 2000);
-    });
-});
-
-// Download JSON
-elements.btnDownloadJson.addEventListener("click", () => {
-    const blob = new Blob([elements.jsonPreview.textContent], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `rapport-${elements.hotelName.value.toLowerCase().replace(/[^a-z0-9]/g, "-")}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-});
-
 // Print PDF Trigger
 elements.btnPrintPdf.addEventListener("click", () => {
     window.print();
-});
-
-elements.btnCloseModal.addEventListener("click", () => {
-    elements.successModal.classList.remove("active");
-    // Only reset if it was a success submission
-    if (elements.successIconContainer.classList.contains("success")) {
-        elements.hotelName.value = "";
-        elements.auditorName.value = "";
-        Object.keys(userAnswers).forEach(key => delete userAnswers[key]);
-        goToSlide(-1);
-    }
 });
 
 // Keyboard triggers (Typeform standard behavior)
@@ -772,6 +698,11 @@ window.addEventListener("keydown", (e) => {
                 const q = flatQuestions[currentQuestionIndex];
                 if (userAnswers[q.id]) {
                     goToSlide(currentQuestionIndex + 1);
+                }
+            } else if (currentQuestionIndex === flatQuestions.length) {
+                // If on final slide and pre-reveal screen is active, Enter triggers reveal
+                if (elements.preRevealSec.style.display !== "none" && !elements.btnRevealResults.disabled) {
+                    elements.btnRevealResults.click();
                 }
             }
         }
