@@ -1,0 +1,15 @@
+{
+  "name": "hotel-audit-system",
+  "version": "1.0.0",
+  "description": "Système d'audit hôtelier épuré avec intégration directe Notion via Vercel Serverless.",
+  "main": "api/submit-audit.js",
+  "scripts": {
+    "start": "node api/submit-audit.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
