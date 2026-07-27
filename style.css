@@ -16,11 +16,11 @@ html {
     --border-color: #000000; /* Crisp black borders */
     --border-light: rgba(0, 0, 0, 0.15);
     
-    --success: #000000;
-    --danger: #000000;
-    
     --accent-red: #e11d48; /* Red Accent for PDF Button */
     --accent-red-hover: #be123c;
+    
+    --accent-green: #059669; /* Green Accent for positive action button */
+    --accent-green-hover: #047857;
     
     --transition-slide: all 0.4s cubic-bezier(0.77, 0, 0.175, 1);
     --transition-quick: all 0.15s ease-out;
@@ -215,6 +215,18 @@ body {
 .btn-typeform:hover .btn-kbd {
     background-color: rgba(0, 0, 0, 0.1);
     color: #000000;
+}
+
+/* --- GREEN REVEAL BUTTON --- */
+.btn-reveal-green {
+    background-color: var(--accent-green) !important;
+    border-color: var(--accent-green) !important;
+    color: #ffffff !important;
+}
+
+.btn-reveal-green:hover {
+    background-color: var(--accent-green-hover) !important;
+    border-color: var(--accent-green-hover) !important;
 }
 
 /* --- RED PDF BUTTON --- */
@@ -512,14 +524,21 @@ body {
 .bar-fill {
     height: 100%;
     width: 0%;
-    background-color: var(--accent-black);
     border-radius: 0px;
     transition: width 1s ease-out;
 }
 
-/* Override dynamically injected colored classes to fit Black & White */
-.bar-fill.warning, .bar-fill.success, .bar-fill.danger {
-    background-color: var(--accent-black) !important;
+/* Color codes dynamically linked back for optimization impact */
+.bar-fill.success {
+    background-color: #10b981 !important; /* Green */
+}
+
+.bar-fill.warning {
+    background-color: #f59e0b !important; /* Orange */
+}
+
+.bar-fill.danger {
+    background-color: #e11d48 !important; /* Red */
 }
 
 .bar-percentage {
@@ -560,20 +579,23 @@ body {
     border: 1px solid var(--border-color);
 }
 
-/* Monochrome indicators for badges */
+/* Colorised borders and backgrounds for diagnostic categories badges */
 .rubric-maturity-badge.low {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #fff5f5;
+    color: #ef4444;
+    border-color: #feb2b2;
 }
 
 .rubric-maturity-badge.medium {
-    background-color: var(--accent-gray-light);
-    color: #000000;
+    background-color: #fffbeb;
+    color: #d97706;
+    border-color: #fde68a;
 }
 
 .rubric-maturity-badge.high {
-    background-color: var(--accent-black);
-    color: #ffffff;
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
 }
 
 .rubric-current-situation {
@@ -636,10 +658,13 @@ body {
     }
     
     .bar-fill {
-        background-color: #000000 !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
+    
+    .bar-fill.success { background-color: #10b981 !important; }
+    .bar-fill.warning { background-color: #f59e0b !important; }
+    .bar-fill.danger { background-color: #e11d48 !important; }
 }
 
 /* --- RESPONSIVE ADJUSTMENTS --- */

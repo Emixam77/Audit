@@ -598,7 +598,7 @@ function generateSummary() {
         let detailedAdviceHtml = catReports.map(rep => `
             <div style="margin-bottom: 1.25rem;">
                 <p class="rubric-current-situation"><strong>Situation actuelle :</strong> ${rep.currentSituation}</p>
-                <p style="font-size: 0.95rem; color: #666666; margin-bottom: 0.25rem;">⚠️ ${rep.diagnosis}</p>
+                <p style="font-size: 0.95rem; color: #e11d48; margin-bottom: 0.25rem; font-weight: 600;">⚠️ ${rep.diagnosis}</p>
                 <p class="rubric-upgrade-text">${rep.recommendation}</p>
             </div>
         `).join("");
